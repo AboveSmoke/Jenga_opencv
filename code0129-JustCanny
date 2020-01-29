@@ -1,0 +1,43 @@
+// 2019.01.29
+// 외곽선 처리만 한 코드
+
+#include "opencv2/opencv.hpp"
+#include "opencv2/imgproc.hpp"
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
+#define LOW_THRESHOLD 50;
+#define HIGH_THRESHOLD 150;
+
+int main(int, char**) {
+	
+	//웹캡으로 부터 데이터 읽어오기 위해 준비
+	VideoCapture cap1(1);
+
+	if (!cap1.isOpened())
+		cout << "첫번째 카메라를 열 수 없습니다." << endl;
+
+	Mat frame; // 웹캠으로부터 받을 영상 프레임
+	Mat frame_gray; // 프레임을 회색조로 변환
+	Mat frame_blur; // 프레임을 블러처리를 함
+	Mat frame_canny; // 프레임에 외곽선처리를 함
+	//namedWindow("jenga_original", 1);
+
+	while (1) {
+		//웹캡으로부터 한 프레임을 읽어옴
+		cap1 >> frame;
+
+		cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+		blur(frame_gray, frame_blur, Size(3, 3));
+		Canny(frame_blur, frame_canny, 50, 150, 3);
+
+		imshow("jenga_original", frame);
+		imshow("jenga_canny", frame_canny);
+		// q키를 누르면 종료
+		if (waitKey(1) == 27) break;
+	}
+	
+	return 0;
+}
